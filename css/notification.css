@@ -1,0 +1,49 @@
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 6px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 10000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.3s ease-out;
+}
+
+.notification-notification-info {
+  background-color: #3498db;
+}
+
+.notification-notification-success {
+  background-color: #2ecc71;
+}
+
+.notification-notification-error {
+  background-color: #e74c3c;
+}
+
+.notification-notification-warning {
+  background-color: #f39c12;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .notification {
+    left: 20px;
+    right: 20px;
+    text-align: center;
+  }
+}

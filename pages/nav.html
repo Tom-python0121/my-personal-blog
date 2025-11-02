@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>导航 - 个人成长空间</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .hero-section {
+      background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: var(--spacing-xl) 0;
+      text-align: center;
+      margin-bottom: var(--spacing-xl);
+    }
+    
+    .hero-title {
+      font-size: var(--font-size-3xl);
+      margin-bottom: var(--spacing-md);
+    }
+    
+    .hero-description {
+      font-size: var(--font-size-lg);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-xl);
+    }
+    
+    .feature-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: var(--spacing-lg);
+      background-color: var(--bg-primary);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      height: 100%;
+      cursor: pointer;
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    
+    .feature-icon {
+      font-size: 3rem;
+      margin-bottom: var(--spacing-md);
+      color: var(--primary-color);
+    }
+    
+    .feature-title {
+      font-size: var(--font-size-xl);
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .feature-description {
+      color: var(--text-secondary);
+    }
+    
+    .quick-nav {
+      margin-bottom: var(--spacing-xl);
+    }
+    
+    .quick-nav-title {
+      margin-bottom: var(--spacing-md);
+      font-size: var(--font-size-2xl);
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="nav">
+    <div class="nav-container container">
+      <a href="nav.html" class="nav-logo">
+        <i class="fas fa-home"></i> 成长空间
+      </a>
+      <button class="hamburger-menu" id="menu-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="nav-menu" id="nav-menu">
+        <a href="my-profile.html" class="nav-item"><i class="fas fa-user"></i> 我的</a>
+        <a href="trips.html" class="nav-item"><i class="fas fa-map-marked-alt"></i> 旅程</a>
+        <a href="gallery.html" class="nav-item"><i class="fas fa-images"></i> 相册</a>
+        <a href="reading.html" class="nav-item"><i class="fas fa-book"></i> 读书</a>
+        <a href="hobbies.html" class="nav-item"><i class="fas fa-paint-brush"></i> 兴趣爱好</a>
+        <a href="pets.html" class="nav-item"><i class="fas fa-paw"></i> 宠物</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主体内容 -->
+  <main class="container">
+    <!-- 英雄区域 -->
+    <section class="hero-section">
+      <div class="container">
+        <h1 class="hero-title">欢迎来到我的个人成长空间</h1>
+        <p class="hero-description">这里记录了我的旅行、阅读、兴趣爱好和生活点滴，见证每一步成长的足迹</p>
+      </div>
+    </section>
+
+    <!-- 功能模块卡片 -->
+    <section class="features-grid">
+      <div class="feature-card" data-href="my-profile.html">
+        <div class="feature-icon"><i class="fas fa-user"></i></div>
+        <h3 class="feature-title">我的</h3>
+        <p class="feature-description">个人信息展示、头像、昵称、个性签名等</p>
+      </div>
+      
+      <div class="feature-card" data-href="trips.html">
+        <div class="feature-icon"><i class="fas fa-map-marked-alt"></i></div>
+        <h3 class="feature-title">旅程</h3>
+        <p class="feature-description">中国地图旅行记录，记录去过的地方和旅途故事</p>
+      </div>
+      
+      <div class="feature-card" data-href="gallery.html">
+        <div class="feature-icon"><i class="fas fa-images"></i></div>
+        <h3 class="feature-title">相册</h3>
+        <p class="feature-description">照片瀑布流展示，记录美好瞬间</p>
+      </div>
+      
+      <div class="feature-card" data-href="reading.html">
+        <div class="feature-icon"><i class="fas fa-book"></i></div>
+        <h3 class="feature-title">读书</h3>
+        <p class="feature-description">读书笔记与心得，支持列表和卡片双视图</p>
+      </div>
+      
+      <div class="feature-card" data-href="hobbies.html">
+        <div class="feature-icon"><i class="fas fa-paint-brush"></i></div>
+        <h3 class="feature-title">兴趣爱好</h3>
+        <p class="feature-description">展示我的各种兴趣爱好和相关作品</p>
+      </div>
+      
+      <div class="feature-card" data-href="pets.html">
+        <div class="feature-icon"><i class="fas fa-paw"></i></div>
+        <h3 class="feature-title">宠物</h3>
+        <p class="feature-description">宠物档案、成长记录和日常生活点滴</p>
+      </div>
+    </section>
+
+    <!-- 快速导航 -->
+    <section class="quick-nav">
+      <h2 class="quick-nav-title">快速导航</h2>
+      <div class="card">
+        <p>选择你感兴趣的内容，开始探索我的个人成长空间。所有数据均存储在本地，保护你的隐私安全。</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // 移动端导航菜单切换
+    document.getElementById('menu-toggle').addEventListener('click', function() {
+      const navMenu = document.getElementById('nav-menu');
+      navMenu.classList.toggle('active');
+    });
+
+    // 功能卡片点击跳转
+    document.querySelectorAll('.feature-card').forEach(card => {
+      card.addEventListener('click', function() {
+        const href = this.getAttribute('data-href');
+        if (href) {
+          window.location.href = href;
+        }
+      });
+    });
+
+    // 高亮当前页面
+    function highlightCurrentPage() {
+      const currentPath = window.location.pathname;
+      const navItems = document.querySelectorAll('.nav-item');
+      
+      navItems.forEach(item => {
+        const itemPath = new URL(item.href).pathname;
+        if (currentPath.endsWith(itemPath)) {
+          item.classList.add('active');
+        }
+      });
+    }
+
+    // 页面加载完成后高亮当前页面
+    document.addEventListener('DOMContentLoaded', highlightCurrentPage);
+  </script>
+</body>
+</html>

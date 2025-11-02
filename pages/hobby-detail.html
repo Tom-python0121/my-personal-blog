@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>兴趣爱好详情</title>
+    <link rel="stylesheet" href="../css/hobbies.css">
+    <link rel="stylesheet" href="../css/notification.css">
+    <!-- 页面样式已移至外部CSS文件 -->
+</head>
+<body>
+    <div class="detail-container">
+        <div class="detail-header">
+            <a href="../index.html" class="home-link">🏠 个人成长空间</a>
+            <button class="back-btn" id="back-btn">
+                ← 返回列表
+            </button>
+            <div class="action-buttons">
+                <button class="edit-btn" id="edit-btn">编辑</button>
+                <button class="delete-btn" id="delete-btn">删除</button>
+            </div>
+        </div>
+        
+        <div class="hobby-overview">
+            <img id="hobby-main-image" src="../assets/images/placeholder.svg" alt="兴趣爱好图片" class="main-image">
+            <div class="hobby-info">
+                <h1 id="hobby-title">兴趣爱好名称</h1>
+                <div class="basic-meta">
+                    <div class="meta-item">
+                        <span class="category-label">分类:</span>
+                        <span id="hobby-category">未分类</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="start-date-label">开始日期:</span>
+                        <span id="hobby-start-date">2024-01-01</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="status-label">状态:</span>
+                        <span id="hobby-status" class="status-badge active">活跃中</span>
+                    </div>
+                </div>
+                <div class="skills-rating">
+                    <div id="hobby-rating" class="rating-stars">★★★★★</div>
+                </div>
+                <p id="hobby-long-description" class="hobby-description">
+                    详细描述将在这里显示...
+                </p>
+            </div>
+        </div>
+        
+        <div class="detail-sections">
+            <div class="section-card">
+                <h2 class="section-title">基本信息</h2>
+                <div class="info-item">
+                    <span class="info-label">名称</span>
+                    <span id="detail-name" class="info-value">--</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">分类</span>
+                    <span id="detail-category" class="info-value">--</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">开始日期</span>
+                    <span id="detail-start-date" class="info-value">--</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">当前状态</span>
+                    <span id="detail-status" class="info-value">--</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">技能等级</span>
+                    <span id="detail-skill-level" class="info-value">--</span>
+                </div>
+            </div>
+            
+            <div class="section-card">
+                <h2 class="section-title">统计数据</h2>
+                <div class="info-item">
+                    <span class="info-label">投入时间</span>
+                    <span id="detail-hours" class="info-value">0 小时</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">成就次数</span>
+                    <span id="detail-achievements" class="info-value">0 次</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">持续天数</span>
+                    <span id="detail-days" class="info-value">0 天</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">最近活动</span>
+                    <span id="detail-last-activity" class="info-value">--</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section-card photo-gallery">
+            <h2 class="section-title">作品照片</h2>
+            <div class="photos-grid" id="photos-grid">
+                <!-- 照片将通过JavaScript动态生成 -->
+            </div>
+        </div>
+        
+        <div class="section-card">
+            <h2 class="section-title">时间轴</h2>
+            <div class="timeline" id="timeline">
+                <!-- 时间轴事件将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="../js/pages/hobbyDetailApp.js"></script>
+</body>
+</html>

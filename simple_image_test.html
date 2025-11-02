@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>最简单的图片测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        img {
+            max-width: 100%;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+        }
+        .path {
+            font-family: monospace;
+            color: #666;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>直接测试小狗图片</h1>
+    <p>这是一个最简单的页面，只包含一张小狗图片</p>
+    
+    <div>
+        <img src="images/puppy_1.jpg" alt="小狗图片" onload="console.log('图片加载成功')" onerror="console.log('图片加载失败')">
+        <div class="path">图片路径: images/puppy_1.jpg</div>
+    </div>
+    
+    <div style="margin-top: 30px;">
+        <h3>如果看到图片，说明图片本身没有问题</h3>
+        <h3>如果看不到图片，请检查控制台错误信息</h3>
+    </div>
+</body>
+</html>

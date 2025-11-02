@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旅程详情 - 个人成长空间</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="../index.html" class="logo">个人成长空间</a>
+            <div class="nav-menu">
+                <a href="nav.html" class="nav-item">导航</a>
+                <a href="my-profile.html" class="nav-item">我的</a>
+                <a href="trips.html" class="nav-item active">旅程</a>
+            </div>
+            <div class="hamburger-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 移动端导航菜单 -->
+    <div class="mobile-menu">
+        <a href="nav.html" class="mobile-nav-item">导航</a>
+        <a href="my-profile.html" class="mobile-nav-item">我的</a>
+        <a href="trips.html" class="mobile-nav-item active">旅程</a>
+        <a href="#" class="mobile-nav-item">相册</a>
+        <a href="#" class="mobile-nav-item">读书</a>
+        <a href="#" class="mobile-nav-item">兴趣爱好</a>
+        <a href="#" class="mobile-nav-item">宠物</a>
+    </div>
+
+    <!-- 主内容区 -->
+    <main class="container">
+        <section class="trip-detail-section">
+            <!-- 顶部信息栏 -->
+            <div class="detail-header">
+                <button id="back-btn" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> 返回
+                </button>
+                <h1 id="province-name" class="province-title">加载中...</h1>
+            </div>
+            
+            <!-- 照片瀑布流 -->
+            <div class="photo-gallery">
+                <h2 class="section-subtitle">旅行照片</h2>
+                <div id="photos-container" class="photos-grid">
+                    <!-- 照片占位符 -->
+                    <div class="photo-item photo-placeholder">
+                        <div class="placeholder-content">
+                            <i class="fas fa-image fa-3x"></i>
+                            <p>点击添加照片</p>
+                            <input type="file" id="add-photo-input" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 旅程详情 -->
+            <div class="trip-info">
+                <h2 class="section-subtitle">旅程详情</h2>
+                <form id="trip-info-form">
+                    <div class="form-group">
+                        <label for="travel-date">旅行时间</label>
+                        <input type="text" id="travel-date" name="travel-date" placeholder="例如：2023年10月">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="travel-mates">同行人</label>
+                        <input type="text" id="travel-mates" name="travel-mates" placeholder="例如：家人、朋友等">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="rating">喜欢程度</label>
+                        <div class="rating">
+                            <i class="fas fa-star" data-rating="1"></i>
+                            <i class="fas fa-star" data-rating="2"></i>
+                            <i class="fas fa-star" data-rating="3"></i>
+                            <i class="fas fa-star" data-rating="4"></i>
+                            <i class="fas fa-star" data-rating="5"></i>
+                            <input type="hidden" id="rating" name="rating" value="3">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="feelings">感想</label>
+                        <textarea id="feelings" name="feelings" rows="6" placeholder="记录下你的旅程感想..."></textarea>
+                    </div>
+                </form>
+                
+                <!-- 操作按钮 -->
+                <div class="action-buttons">
+                    <button id="save-changes-btn" class="btn btn-primary">保存修改</button>
+                    <button id="delete-trip-btn" class="btn btn-danger">删除旅程</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 确认删除弹窗 -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h2>确认删除</h2>
+                <button id="close-delete-modal-btn" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>确定要删除这个旅程记录吗？此操作不可恢复。</p>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-delete-btn" class="btn btn-secondary">取消</button>
+                <button id="confirm-delete-btn" class="btn btn-danger">确认删除</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 遮罩层 -->
+    <div id="overlay" class="overlay"></div>
+
+    <!-- JavaScript -->
+    <script type="module">
+        // 导入旅程管理模块
+        import { trips } from '../js/utils/trips.js';
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 获取URL参数中的省份名
+            const urlParams = new URLSearchParams(window.location.search);
+            const provinceName = urlParams.get('province');
+            
+            if (!provinceName) {
+                alert('未找到指定的旅程信息');
+                window.location.href = 'trips.html';
+                return;
+            }
+            
+            // 初始化页面
+            initPage(provinceName);
+            
+            // 初始化事件监听器
+            initEventListeners();
+        });
+        
+        // 当前旅程数据
+        let currentTrip = null;
+        let provinceName = '';
+        
+        /**
+         * 初始化页面数据
+         * @param {string} province - 省份名称
+         */
+        function initPage(province) {
+            provinceName = province;
+            
+            // 显示省份名称
+            document.getElementById('province-name').textContent = province;
+            
+            // 获取旅程数据
+            const trip = trips.getTripByProvince(province);
+            
+            if (!trip) {
+                alert('未找到该省份的旅程信息');
+                window.location.href = 'trips.html';
+                return;
+            }
+            
+            // 保存当前旅程数据
+            currentTrip = trip;
+            
+            // 填充表单数据
+            document.getElementById('travel-date').value = trip.travelDate || '';
+            document.getElementById('travel-mates').value = trip.travelMates || '';
+            document.getElementById('rating').value = trip.rating || 3;
+            document.getElementById('feelings').value = trip.feelings || '';
+            
+            // 更新星级显示
+            updateStars(trip.rating || 3);
+            
+            // 显示照片
+            renderPhotos(trip.photos || []);
+        }
+        
+        /**
+         * 初始化事件监听器
+         */
+        function initEventListeners() {
+            // 返回按钮点击事件
+            document.getElementById('back-btn').addEventListener('click', () => {
+                window.location.href = 'trips.html';
+            });
+            
+            // 保存修改按钮点击事件
+            document.getElementById('save-changes-btn').addEventListener('click', saveChanges);
+            
+            // 删除旅程按钮点击事件
+            document.getElementById('delete-trip-btn').addEventListener('click', showDeleteModal);
+            
+            // 关闭删除弹窗按钮点击事件
+            document.getElementById('close-delete-modal-btn').addEventListener('click', hideDeleteModal);
+            document.getElementById('cancel-delete-btn').addEventListener('click', hideDeleteModal);
+            
+            // 确认删除按钮点击事件
+            document.getElementById('confirm-delete-btn').addEventListener('click', confirmDelete);
+            
+            // 遮罩层点击事件
+            document.getElementById('overlay').addEventListener('click', () => {
+                hideDeleteModal();
+            });
+            
+            // 星级评分点击事件
+            const stars = document.querySelectorAll('.rating .fa-star');
+            stars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = parseInt(this.getAttribute('data-rating'));
+                    document.getElementById('rating').value = rating;
+                    updateStars(rating);
+                });
+            });
+            
+            // 添加照片点击事件
+            document.querySelector('.photo-placeholder').addEventListener('click', () => {
+                document.getElementById('add-photo-input').click();
+            });
+            
+            // 照片选择事件
+            document.getElementById('add-photo-input').addEventListener('change', handlePhotoSelection);
+            
+            // 移动端菜单切换
+            document.querySelector('.hamburger-menu').addEventListener('click', toggleMobileMenu);
+        }
+        
+        /**
+         * 渲染照片列表
+         * @param {Array} photos - 照片数据数组
+         */
+        function renderPhotos(photos) {
+            const container = document.getElementById('photos-container');
+            
+            // 清空容器，但保留占位符
+            const placeholder = document.querySelector('.photo-placeholder');
+            container.innerHTML = '';
+            container.appendChild(placeholder);
+            
+            // 添加照片
+            photos.forEach((photo, index) => {
+                const photoItem = document.createElement('div');
+                photoItem.className = 'photo-item';
+                
+                // 使用占位图或base64图片
+                const imgSrc = photo.base64 || getPlaceholderImage();
+                
+                photoItem.innerHTML = `
+                    <img src="${imgSrc}" alt="旅行照片" class="trip-photo">
+                    <button class="delete-photo-btn" data-index="${index}">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                `;
+                
+                // 在占位符之前插入照片
+                container.insertBefore(photoItem, placeholder);
+                
+                // 添加删除照片事件
+                const deleteBtn = photoItem.querySelector('.delete-photo-btn');
+                deleteBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const idx = parseInt(this.getAttribute('data-index'));
+                    deletePhoto(idx);
+                });
+            });
+        }
+        
+        /**
+         * 处理照片选择
+         * @param {Event} event - 文件选择事件
+         */
+        function handlePhotoSelection(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            // 检查文件类型
+            if (!file.type.startsWith('image/')) {
+                alert('请选择图片文件');
+                return;
+            }
+            
+            // 读取图片文件
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // 添加新照片到旅程数据
+                if (!currentTrip.photos) {
+                    currentTrip.photos = [];
+                }
+                
+                currentTrip.photos.push({
+                    base64: e.target.result,
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                });
+                
+                // 保存数据
+                saveTripData();
+                
+                // 重新渲染照片
+                renderPhotos(currentTrip.photos);
+                
+                // 重置文件输入
+                event.target.value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        /**
+         * 删除照片
+         * @param {number} index - 照片索引
+         */
+        function deletePhoto(index) {
+            if (confirm('确定要删除这张照片吗？')) {
+                if (currentTrip.photos && currentTrip.photos.length > index) {
+                    currentTrip.photos.splice(index, 1);
+                    saveTripData();
+                    renderPhotos(currentTrip.photos);
+                }
+            }
+        }
+        
+        /**
+         * 保存修改
+         */
+        function saveChanges() {
+            // 更新当前旅程数据
+            currentTrip.travelDate = document.getElementById('travel-date').value.trim();
+            currentTrip.travelMates = document.getElementById('travel-mates').value.trim();
+            currentTrip.rating = parseInt(document.getElementById('rating').value);
+            currentTrip.feelings = document.getElementById('feelings').value.trim();
+            
+            // 保存数据
+            if (saveTripData()) {
+                alert('保存成功');
+            } else {
+                alert('保存失败，请重试');
+            }
+        }
+        
+        /**
+         * 保存旅程数据
+         * @returns {boolean} 是否保存成功
+         */
+        function saveTripData() {
+            try {
+                // 确保包含更新时间
+                currentTrip.updatedAt = new Date().toISOString();
+                
+                // 使用trips模块保存数据
+                return trips.saveTrip(currentTrip);
+            } catch (error) {
+                console.error('保存旅程数据失败:', error);
+                return false;
+            }
+        }
+        
+        /**
+         * 显示删除确认弹窗
+         */
+        function showDeleteModal() {
+            const modal = document.getElementById('delete-modal');
+            const overlay = document.getElementById('overlay');
+            
+            modal.classList.add('show');
+            overlay.classList.add('show');
+        }
+        
+        /**
+         * 隐藏删除确认弹窗
+         */
+        function hideDeleteModal() {
+            const modal = document.getElementById('delete-modal');
+            const overlay = document.getElementById('overlay');
+            
+            modal.classList.remove('show');
+            overlay.classList.remove('show');
+        }
+        
+        /**
+         * 确认删除旅程
+         */
+        function confirmDelete() {
+            try {
+                // 使用trips模块删除旅程
+                if (trips.deleteTrip(provinceName)) {
+                    // 返回地图页面
+                    window.location.href = 'trips.html';
+                } else {
+                    alert('删除失败，请重试');
+                    hideDeleteModal();
+                }
+            } catch (error) {
+                console.error('删除旅程失败:', error);
+                alert('删除失败，请重试');
+                hideDeleteModal();
+            }
+        }
+        
+        /**
+         * 更新星级显示
+         * @param {number} rating - 评分值（1-5）
+         */
+        function updateStars(rating) {
+            const stars = document.querySelectorAll('.rating .fa-star');
+            stars.forEach(star => {
+                const starRating = parseInt(star.getAttribute('data-rating'));
+                if (starRating <= rating) {
+                    star.style.color = '#FFC107';
+                } else {
+                    star.style.color = '#E0E0E0';
+                }
+            });
+        }
+        
+        /**
+         * 获取占位图片
+         * @returns {string} 占位图片URL
+         */
+        function getPlaceholderImage() {
+            // 使用颜色生成器创建不同的占位图颜色
+            const colors = ['#FF9AA2', '#FFB7B2', '#FFDAC1', '#E2F0CB', '#B5EAD7', '#C7CEEA'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            // 返回data URL作为占位图
+            return `data:image/svg+xml;charset=UTF-8,%3csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3e%3crect fill='${randomColor}' width='200' height='200'/%3e%3c/svg%3e`;
+        }
+        
+        // trips模块内部已处理省份名称标准化，无需在此处重复实现
+        
+        /**
+         * 切换移动端菜单
+         */
+        function toggleMobileMenu() {
+            const mobileMenu = document.querySelector('.mobile-menu');
+            mobileMenu.classList.toggle('show');
+        }
+    </script>
+</body>
+</html>

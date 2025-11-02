@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的书架</title>
+    <!-- 引入Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入主样式文件 -->
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+    <!-- 简洁标题栏 -->
+    <header class="simple-header">
+        <div class="container">
+            <div class="header-content">
+                <a href="../index.html" class="personal-space-link">个人空间</a>
+                <h1>我的书架</h1>
+                <div class="empty-space"></div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区域 -->
+    <main class="main">
+        <div class="container">
+            <!-- 读书应用容器 -->
+            <div id="reading-app" class="reading-app">
+                <!-- 加载状态 -->
+                <div class="loader" id="app-loader">
+                    <div class="spinner"></div>
+                    <p>加载中...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p>&copy; 2024 个人网站. All rights reserved.</p>
+                </div>
+                <div class="footer-social">
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 通知容器 -->
+    <div id="notification-container"></div>
+
+    <!-- 引入JavaScript模块 -->
+    <script type="module">
+        // 动态导入读书应用模块
+        import { readingApp } from '../js/pages/readingApp.js';
+        
+        // 页面加载完成后隐藏加载器
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const loader = document.getElementById('app-loader');
+                if (loader) {
+                    loader.style.display = 'none';
+                }
+            }, 500);
+        });
+    </script>
+
+    <!-- 移动端菜单脚本 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburgerMenu = document.getElementById('hamburger-menu');
+            const nav = document.querySelector('.nav');
+            
+            if (hamburgerMenu && nav) {
+                hamburgerMenu.addEventListener('click', () => {
+                    nav.classList.toggle('nav-open');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

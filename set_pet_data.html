@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设置宠物数据</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .code {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            word-break: break-all;
+            margin: 15px 0;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>设置宠物数据 - 小狗照片</h1>
+    
+    <div class="code">
+        <strong>正在更新localStorage数据...</strong>
+    </div>
+
+    <div id="result" class="success" style="display: none;">
+        <h3>✅ 数据更新成功！</h3>
+        <p>宠物数据已成功更新到localStorage中。</p>
+        <p>宠物名称: <span id="petName"></span></p>
+        <p>品种: <span id="petBreed"></span></p>
+        <p>已添加 <span id="photoCount"></span> 张小狗照片到照片合集</p>
+        <p><a href="pages/pets.html" target="_blank">点击查看宠物管理页面</a></p>
+    </div>
+
+    <script>
+        // 小狗图片路径
+        const puppyImages = [
+            './images/puppy_1.jpg',
+            './images/puppy_2.jpg',
+            './images/puppy_3.jpg'
+        ];
+
+        // 描述信息
+        const descriptions = [
+            '可爱的小狗正面照',
+            '活泼的小狗玩耍中',
+            '小狗的侧面特写'
+        ];
+
+        // 获取当前时间作为日期
+        const today = new Date().toISOString().split('T')[0];
+
+        // 创建宠物数据
+        const petData = {
+            id: '1',
+            name: '小白',
+            breed: '混血小狗',
+            birthDate: '2023-06-01',
+            gender: '公',
+            color: '白色',
+            weight: '8kg',
+            personality: ['活泼', '友好', '聪明'],
+            avatar: puppyImages[0],
+            photos: puppyImages.map((url, index) => ({
+                id: `photo_${Date.now()}_${index}`,
+                url: url,
+                date: today,
+                description: descriptions[index],
+                likeCount: Math.floor(Math.random() * 10),
+                liked: Math.random() > 0.5
+            }))
+        };
+
+        // 获取现有宠物数据或创建新的
+        let pets = JSON.parse(localStorage.getItem('personal_growth_pets') || '[]');
+        
+        // 检查是否已有ID为1的宠物，如果有则更新，没有则添加
+        const existingPetIndex = pets.findIndex(pet => pet.id === '1');
+        if (existingPetIndex !== -1) {
+            pets[existingPetIndex] = petData;
+        } else {
+            pets.push(petData);
+        }
+
+        // 保存到localStorage
+        localStorage.setItem('personal_growth_pets', JSON.stringify(pets));
+
+        // 显示成功信息
+        document.getElementById('petName').textContent = petData.name;
+        document.getElementById('petBreed').textContent = petData.breed;
+        document.getElementById('photoCount').textContent = petData.photos.length;
+        document.getElementById('result').style.display = 'block';
+
+        // 输出到控制台
+        console.log('宠物数据已更新:', petData);
+    </script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>强制重置宠物数据</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 40px;
+            background: #f0f2f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #c82333;
+        }
+        .step {
+            background: #e9ecef;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>强制重置宠物数据</h1>
+        <p>此操作将：</p>
+        <div class="step">1. 完全清除localStorage中的宠物数据</div>
+        <div class="step">2. 设置正确的小狗图片路径</div>
+        <div class="step">3. 自动跳转到宠物页面</div>
+        
+        <button id="resetBtn">强制重置并前往宠物页面</button>
+        
+        <div id="status" style="margin-top: 20px;"></div>
+    </div>
+
+    <script>
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            const status = document.getElementById('status');
+            status.textContent = '正在重置...';
+            
+            try {
+                // 1. 完全清除现有数据
+                localStorage.removeItem('personal_growth_pets');
+                status.textContent = '已清除旧数据...';
+                
+                // 2. 使用绝对正确的相对路径 - 从pages目录引用
+                const puppyImages = [
+                    '../images/puppy_1.jpg',
+                    '../images/puppy_2.jpg',
+                    '../images/puppy_3.jpg'
+                ];
+
+                // 3. 创建完整的宠物数据
+                const petData = {
+                    id: '1',
+                    name: '小白',
+                    breed: '混血小狗',
+                    birthDate: '2023-06-01',
+                    gender: '公',
+                    color: '白色',
+                    weight: '8kg',
+                    personality: ['活泼', '友好', '聪明'],
+                    avatar: puppyImages[0],
+                    photos: puppyImages.map((url, index) => ({
+                        id: `photo_${Date.now()}_${index}`,
+                        url: url,
+                        date: new Date().toISOString().split('T')[0],
+                        description: `可爱的小狗照片 ${index + 1}`,
+                        likeCount: Math.floor(Math.random() * 5) + 1,
+                        liked: Math.random() > 0.5
+                    }))
+                };
+
+                // 4. 保存到localStorage
+                localStorage.setItem('personal_growth_pets', JSON.stringify([petData]));
+                status.textContent = '已设置新的小狗数据...';
+                
+                // 5. 立即刷新宠物页面
+                setTimeout(() => {
+                    status.textContent = '正在跳转...';
+                    window.location.href = 'pages/pets.html';
+                }, 1500);
+                
+            } catch (error) {
+                status.textContent = '重置失败: ' + error.message;
+                console.error('重置过程出错:', error);
+            }
+        });
+    </script>
+</body>
+</html>

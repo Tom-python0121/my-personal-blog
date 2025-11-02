@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>相册 - 成长空间</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 相册页面样式 */
+        .gallery-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 筛选区域样式 */
+        .filter-section {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .category-tab {
+            padding: 8px 16px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .category-tab:hover {
+            background: #e0e0e0;
+        }
+
+        .category-tab.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .tag-filter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tag-filter label {
+            font-weight: 500;
+        }
+
+        .tag-input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 200px;
+            font-size: 14px;
+        }
+
+        .upload-btn {
+            margin-left: auto;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+
+        .upload-btn:hover {
+            background: #0056b3;
+        }
+
+        /* 瀑布流布局 */
+        .masonry-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        /* 相册项样式 */
+        .gallery-item {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 120%; /* 固定宽高比 */
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f0f0; /* 默认背景色 */
+        }
+
+        /* 加载动画 */
+        .gallery-image {
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        /* 加载过程中的占位 */
+        .image-container {
+            background-color: #f8f9fa;
+        }
+
+        .gallery-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover .gallery-image {
+            transform: scale(1.05);
+        }
+
+        /* CSS变量定义 */
+        :root {
+            --color-travel: #3498db;
+            --color-food: #e74c3c;
+            --color-nature: #2ecc71;
+            --color-people: #9b59b6;
+            --color-default: #95a5a6;
+        }
+        
+        /* 图片占位符样式 */
+        .image-placeholder {
+            background-color: var(--color-default);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        /* 基于data-category属性设置不同分类的背景色 */
+        .image-placeholder[data-category="travel"] {
+            background-color: var(--color-travel);
+        }
+        
+        .image-placeholder[data-category="food"] {
+            background-color: var(--color-food);
+        }
+        
+        .image-placeholder[data-category="nature"] {
+            background-color: var(--color-nature);
+        }
+        
+        .image-placeholder[data-category="people"] {
+            background-color: var(--color-people);
+        }
+        
+        /* 图片内容容器 */
+        .image-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        /* 图片图标 */
+        .image-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+        
+        /* 图片文本 */
+        .image-text {
+            font-size: 18px;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            line-height: 1.4;
+        }
+        
+        /* 占位文本样式 */
+        .placeholder-text,
+        .placeholder-title {
+            position: absolute;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            box-sizing: border-box;
+            cursor: pointer; /* 保持可点击状态 */
+        }
+
+        .image-info {
+            padding: 15px;
+        }
+
+        .image-title {
+            margin: 0 0 5px 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .image-category {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .image-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .like-btn {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: color 0.3s ease;
+        }
+
+        .like-btn:hover {
+            color: #ff4757;
+        }
+
+        .like-btn.liked {
+            color: #ff4757;
+        }
+
+        .image-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* 上传模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .file-label:hover {
+            background: #0056b3;
+        }
+
+        .preview-container {
+            margin-top: 15px;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #ddd;
+            border-radius: 4px;
+            padding: 10px;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            display: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+
+        /* 大图预览模态框 */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        .lightbox-image {
+            max-width: 100%;
+            max-height: 80vh;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .lightbox-close:hover {
+            color: #bbb;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .upload-btn {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .tag-input {
+                width: 100%;
+            }
+
+            .masonry-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav id="navbar"></nav>
+
+    <main class="gallery-container">
+        <h1>我的相册</h1>
+        
+        <!-- 筛选区域 -->
+        <div class="filter-section">
+            <div class="category-tabs">
+                <button class="category-tab active" data-category="all">全部</button>
+                <button class="category-tab" data-category="travel">旅行</button>
+                <button class="category-tab" data-category="food">美食</button>
+                <button class="category-tab" data-category="nature">自然</button>
+                <button class="category-tab" data-category="people">人物</button>
+                <button class="category-tab" data-category="liked">已点赞</button>
+            </div>
+            
+            <div class="tag-filter">
+                <label for="tagFilter">标签筛选:</label>
+                <input type="text" id="tagFilter" class="tag-input" placeholder="输入标签关键词...">
+            </div>
+            
+            <button class="upload-btn" id="simpleUploadButton" style="background-color: #007bff; color: white; padding: 12px 24px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; z-index: 100; position: relative;">+ 上传照片</button>
+        </div>
+
+        <!-- 瀑布流相册 -->
+        <div class="masonry-grid" id="galleryGrid">
+            <!-- 相册内容将通过 JavaScript 动态生成 -->
+        </div>
+    </main>
+
+    <!-- 简化的上传模态框 -->
+    <div id="simpleUploadModal" style="
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    ">
+        <div style="
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        ">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;">上传照片</h3>
+                <button id="simpleCloseModal" style="
+                    background: none;
+                    border: none;
+                    font-size: 24px;
+                    cursor: pointer;
+                    color: #666;
+                ">&times;</button>
+            </div>
+            
+            <form id="simpleUploadForm">
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px;">选择图片</label>
+                    <input type="file" id="simpleImageInput" accept="image/*" style="width: 100%; padding: 8px;">
+                    <div id="simplePreviewArea" style="
+                        margin-top: 10px;
+                        min-height: 150px;
+                        border: 2px dashed #ddd;
+                        border-radius: 4px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        padding: 10px;
+                    ">
+                        <img id="simpleImagePreview" style="max-width: 100%; max-height: 200px; display: none;">
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px;">图片标题</label>
+                    <input type="text" id="simpleImageTitle" placeholder="请输入图片标题" style="width: 100%; padding: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px;">分类</label>
+                    <select id="simpleImageCategory" style="width: 100%; padding: 8px;">
+                        <option value="travel">旅行</option>
+                        <option value="food">美食</option>
+                        <option value="nature">自然</option>
+                        <option value="people">人物</option>
+                    </select>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px;">标签</label>
+                    <input type="text" id="simpleImageTags" placeholder="输入标签，用逗号分隔" style="width: 100%; padding: 8px;">
+                </div>
+                
+                <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                    <button type="button" id="simpleCancelBtn" style="
+                        padding: 8px 16px;
+                        background: #6c757d;
+                        color: white;
+                        border: none;
+                        border-radius: 4px;
+                        cursor: pointer;
+                    ">取消</button>
+                    <button type="button" id="simpleSubmitBtn" style="
+                        padding: 8px 16px;
+                        background: #007bff;
+                        color: white;
+                        border: none;
+                        border-radius: 4px;
+                        cursor: pointer;
+                    ">上传</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 大图预览模态框 -->
+    <div class="lightbox" id="lightbox">
+        <span class="lightbox-close">&times;</span>
+        <div class="lightbox-content">
+            <img class="lightbox-image" id="lightboxImage" alt="大图预览">
+        </div>
+    </div>
+
+    <!-- 不使用storage.js，因为相册模块不进行数据持久化存储 -->
+    <script>
+        // 导航栏加载
+        document.addEventListener('DOMContentLoaded', function() {
+            // 直接使用现有的导航栏HTML结构，避免fetch可能的问题
+            const navbar = document.getElementById('navbar');
+            navbar.innerHTML = `
+            <div class="nav-container container">
+                <a href="../pages/nav.html" class="nav-logo">
+                    <i class="fas fa-home"></i> 成长空间
+                </a>
+                <button class="hamburger-menu" id="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="nav-menu" id="nav-menu">
+                    <a href="../pages/my-profile.html" class="nav-item"><i class="fas fa-user"></i> 我的</a>
+                    <a href="../pages/trips.html" class="nav-item"><i class="fas fa-map-marked-alt"></i> 旅程</a>
+                    <a href="../pages/gallery.html" class="nav-item active"><i class="fas fa-images"></i> 相册</a>
+                    <a href="../pages/books.html" class="nav-item"><i class="fas fa-book"></i> 读书</a>
+                    <a href="../pages/hobbies.html" class="nav-item"><i class="fas fa-paint-brush"></i> 兴趣爱好</a>
+                    <a href="../pages/pets.html" class="nav-item"><i class="fas fa-paw"></i> 宠物</a>
+                </div>
+            </div>
+            `;
+            
+            // 初始化相册
+            initGallery();
+        });
+
+        // 相册数据（使用内存变量存储临时数据）
+        let galleryData = [];
+        
+        // 初始化相册
+        function initGallery() {
+            // 加载模拟数据
+            loadMockData();
+            
+            // 渲染相册
+            renderGallery();
+            
+            // 绑定事件
+            bindEvents();
+        }
+
+        // 加载模拟数据
+        function loadMockData() {
+            // 使用纯色占位图，通过CSS类名控制颜色
+            galleryData = [
+                {
+                    id: Date.now() + 1,
+                    title: '山间小路',
+                    image: 'https://picsum.photos/seed/mountain123/600/720',
+                    category: 'travel',
+                    categoryName: '旅行',
+                    tags: ['山', '自然', '徒步'],
+                    liked: false,
+                    likes: 0
+                },
+                {
+                    id: Date.now() + 2,
+                    title: '精致下午茶',
+                    image: 'https://picsum.photos/seed/coffee456/600/720',
+                    category: 'food',
+                    categoryName: '美食',
+                    tags: ['咖啡', '甜点', '休闲'],
+                    liked: false,
+                    likes: 0
+                },
+                {
+                    id: Date.now() + 3,
+                    title: '海边日出',
+                    image: 'https://picsum.photos/seed/sunrise789/600/720',
+                    category: 'nature',
+                    categoryName: '自然',
+                    tags: ['海', '日出', '风景'],
+                    liked: false,
+                    likes: 0
+                },
+                {
+                    id: Date.now() + 4,
+                    title: '城市天际线',
+                    image: 'https://picsum.photos/seed/city321/600/720',
+                    category: 'travel',
+                    categoryName: '旅行',
+                    tags: ['城市', '建筑', '夜景'],
+                    liked: false,
+                    likes: 0
+                },
+                {
+                    id: Date.now() + 5,
+                    title: '野生动物',
+                    image: 'https://picsum.photos/seed/wild654/600/720',
+                    category: 'nature',
+                    categoryName: '自然',
+                    tags: ['动物', '自然', '生态'],
+                    liked: false,
+                    likes: 0
+                },
+                {
+                    id: Date.now() + 6,
+                    title: '美味佳肴',
+                    image: 'https://picsum.photos/seed/food987/600/720',
+                    category: 'food',
+                    categoryName: '美食',
+                    tags: ['美食', '烹饪', '晚餐'],
+                    liked: false,
+                    likes: 0
+                }
+            ];
+        }
+
+        // 渲染相册
+        function renderGallery(filteredData = null) {
+            const galleryGrid = document.getElementById('galleryGrid');
+            galleryGrid.innerHTML = '';
+            
+            const dataToRender = filteredData || galleryData;
+            
+            if (dataToRender.length === 0) {
+                galleryGrid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;">暂无符合条件的照片</div>';
+                return;
+            }
+            
+            dataToRender.forEach(item => {
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'gallery-item';
+                galleryItem.dataset.id = item.id;
+                galleryItem.dataset.category = item.category;
+                
+                // 构建标签HTML
+                const tagsHtml = item.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+                
+                // 使用真实图片URL渲染图片
+                galleryItem.innerHTML = `
+                    <div class="image-container">
+                        <img src="${item.image}" alt="${item.title}" class="gallery-image" />
+                    </div>
+                    <div class="image-info">
+                        <h3 class="image-title">${item.title}</h3>
+                        <div class="image-category">分类: ${item.categoryName}</div>
+                        <div class="image-tags">
+                            ${tagsHtml}
+                        </div>
+                        <div class="image-actions">
+                            <button class="like-btn ${item.liked ? 'liked' : ''}">
+                                    <i class="fas fa-heart"></i> ${item.likes}
+                                </button>
+                        </div>
+                    </div>
+                `;
+                
+                galleryGrid.appendChild(galleryItem);
+            });
+        }
+
+        // 完全重写上传功能，使用最简单直接的实现方式
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM加载完成，初始化上传功能');
+            
+            // 获取元素引用
+            const uploadButton = document.getElementById('simpleUploadButton');
+            const uploadModal = document.getElementById('simpleUploadModal');
+            const closeButton = document.getElementById('simpleCloseModal');
+            const cancelButton = document.getElementById('simpleCancelBtn');
+            const submitButton = document.getElementById('simpleSubmitBtn');
+            const imageInput = document.getElementById('simpleImageInput');
+            const imagePreview = document.getElementById('simpleImagePreview');
+            const previewArea = document.getElementById('simplePreviewArea');
+            
+            // 验证所有元素是否存在
+            console.log('上传功能元素检查:', {
+                uploadButton: !!uploadButton,
+                uploadModal: !!uploadModal,
+                closeButton: !!closeButton,
+                cancelButton: !!cancelButton,
+                submitButton: !!submitButton,
+                imageInput: !!imageInput,
+                imagePreview: !!imagePreview,
+                previewArea: !!previewArea
+            });
+            
+            // 显示模态框函数
+            function showModal() {
+                console.log('显示上传模态框');
+                if (uploadModal) {
+                    // 强制设置模态框样式
+                    uploadModal.style.display = 'flex';
+                    uploadModal.style.position = 'fixed';
+                    uploadModal.style.top = '0';
+                    uploadModal.style.left = '0';
+                    uploadModal.style.width = '100%';
+                    uploadModal.style.height = '100%';
+                    uploadModal.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+                    uploadModal.style.justifyContent = 'center';
+                    uploadModal.style.alignItems = 'center';
+                    uploadModal.style.zIndex = '9999';
+                    uploadModal.style.pointerEvents = 'auto';
+                    
+                    // 强制浏览器重绘
+                    void uploadModal.offsetWidth;
+                    console.log('模态框已显示');
+                }
+            }
+            
+            // 隐藏模态框函数
+            function hideModal() {
+                console.log('隐藏上传模态框');
+                if (uploadModal) {
+                    uploadModal.style.display = 'none';
+                }
+            }
+            
+            // 图片预览功能
+            if (imageInput && imagePreview && previewArea) {
+                imageInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            imagePreview.src = event.target.result;
+                            imagePreview.style.display = 'block';
+                            previewArea.style.borderColor = '#007bff';
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+            
+            // 绑定上传按钮点击事件 - 使用直接绑定
+            if (uploadButton) {
+                // 移除任何可能存在的旧事件处理器
+                uploadButton.onclick = null;
+                
+                // 设置新的点击事件处理器
+                uploadButton.onclick = function() {
+                    console.log('上传按钮被点击');
+                    showModal();
+                };
+                
+                console.log('上传按钮事件已绑定');
+            }
+            
+            // 绑定关闭按钮事件
+            if (closeButton) {
+                closeButton.onclick = hideModal;
+            }
+            
+            // 绑定取消按钮事件
+            if (cancelButton) {
+                cancelButton.onclick = hideModal;
+            }
+            
+            // 绑定提交按钮事件
+            if (submitButton) {
+                submitButton.onclick = function() {
+                    console.log('提交上传表单');
+                    performUpload();
+                };
+            }
+            
+            // 点击模态框外部关闭
+            if (uploadModal) {
+                uploadModal.addEventListener('click', function(event) {
+                    if (event.target === uploadModal) {
+                        hideModal();
+                    }
+                });
+            }
+            
+            // 上传处理函数
+            function performUpload() {
+                const titleInput = document.getElementById('simpleImageTitle');
+                const categorySelect = document.getElementById('simpleImageCategory');
+                const tagsInput = document.getElementById('simpleImageTags');
+                
+                if (!titleInput || !categorySelect) {
+                    alert('表单元素未找到');
+                    return;
+                }
+                
+                const title = titleInput.value.trim();
+                const category = categorySelect.value;
+                const tagsText = tagsInput ? tagsInput.value.trim() : '';
+                const tags = tagsText ? tagsText.split(',').map(tag => tag.trim()) : [];
+                
+                if (!title) {
+                    alert('请输入图片标题');
+                    return;
+                }
+                
+                if (!imageInput.files.length) {
+                    alert('请选择图片');
+                    return;
+                }
+                
+                // 模拟上传过程
+                console.log('开始模拟上传', { title, category, tags });
+                
+                // 创建新图片数据
+                const newImage = {
+                    id: Date.now(),
+                    title: title,
+                    image: imagePreview.src, // 使用预览的DataURL作为图片源
+                    category: category,
+                    categoryName: getCategoryName(category),
+                    tags: tags,
+                    liked: false,
+                    likes: 0
+                };
+                
+                // 添加到相册数据
+                galleryData.push(newImage);
+                
+                // 重新渲染相册
+                renderGallery();
+                
+                // 显示成功消息
+                alert('图片上传成功！');
+                
+                // 隐藏模态框并重置表单
+                hideModal();
+                resetForm();
+            }
+            
+            // 获取分类中文名
+            function getCategoryName(category) {
+                const categoryMap = {
+                    'travel': '旅行',
+                    'food': '美食',
+                    'nature': '自然',
+                    'people': '人物'
+                };
+                return categoryMap[category] || category;
+            }
+            
+            // 重置表单
+            function resetForm() {
+                const form = document.getElementById('simpleUploadForm');
+                if (form) {
+                    form.reset();
+                }
+                if (imagePreview) {
+                    imagePreview.style.display = 'none';
+                    imagePreview.src = '';
+                }
+                if (previewArea) {
+                    previewArea.style.borderColor = '#ddd';
+                }
+            }
+            
+            console.log('上传功能初始化完成');
+        });
+        
+        // 绑定事件
+        function bindEvents() {
+            console.log('绑定事件开始');
+            
+            // 分类筛选
+            const categoryTabs = document.querySelectorAll('.category-tab');
+            if (categoryTabs.length > 0) {
+                categoryTabs.forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        // 移除所有active类
+                        categoryTabs.forEach(t => t.classList.remove('active'));
+                        // 添加当前active类
+                        this.classList.add('active');
+                        
+                        const category = this.dataset.category;
+                        filterGallery(category);
+                    });
+                });
+            }
+            
+            // 标签筛选
+            const tagFilterInput = document.getElementById('tagFilter');
+            if (tagFilterInput) {
+                tagFilterInput.addEventListener('input', function() {
+                    const tagKeyword = this.value.toLowerCase().trim();
+                    filterByTag(tagKeyword);
+                });
+            }
+            
+            // 注意：上传功能已经在独立的DOMContentLoaded事件中实现
+            // 此处不再绑定旧的上传元素，避免冲突和错误
+            console.log('bindEvents中的上传功能绑定已跳过，使用新的独立实现');
+            
+            // 点击图片查看大图
+            const galleryGrid = document.getElementById('galleryGrid');
+            if (galleryGrid) {
+                galleryGrid.addEventListener('click', function(event) {
+                    const galleryImage = event.target.closest('.gallery-image');
+                    if (galleryImage) {
+                        openLightbox(galleryImage.src, galleryImage.alt);
+                    }
+                });
+                
+                // 点赞功能
+                galleryGrid.addEventListener('click', function(event) {
+                    const likeBtn = event.target.closest('.like-btn');
+                    if (likeBtn && !event.target.closest('.gallery-image')) {
+                        event.stopPropagation();
+                        const galleryItem = likeBtn.closest('.gallery-item');
+                        const imageId = parseInt(galleryItem.dataset.id);
+                        toggleLike(imageId, likeBtn);
+                    }
+                });
+            }
+            
+            // 大图预览关闭
+            const lightbox = document.getElementById('lightbox');
+            const lightboxClose = document.querySelector('.lightbox-close');
+            
+            if (lightboxClose) {
+                lightboxClose.addEventListener('click', function() {
+                    if (lightbox) {
+                        lightbox.style.display = 'none';
+                    }
+                });
+            }
+            
+            if (lightbox) {
+                window.addEventListener('click', function(event) {
+                    if (event.target === lightbox) {
+                        lightbox.style.display = 'none';
+                    }
+                });
+                
+                // 按ESC键关闭模态框
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape') {
+                        lightbox.style.display = 'none';
+                    }
+                });
+            }
+            
+            console.log('绑定事件完成');
+        }
+
+        // 筛选相册
+        function filterGallery(category) {
+            let filteredData = galleryData;
+            
+            if (category === 'liked') {
+                filteredData = galleryData.filter(item => item.liked);
+            } else if (category !== 'all') {
+                filteredData = galleryData.filter(item => item.category === category);
+            }
+            
+            // 结合标签筛选
+            const tagKeyword = document.getElementById('tagFilter').value.toLowerCase().trim();
+            if (tagKeyword) {
+                filteredData = filteredData.filter(item => 
+                    item.tags.some(tag => tag.toLowerCase().includes(tagKeyword))
+                );
+            }
+            
+            renderGallery(filteredData);
+        }
+
+        // 按标签筛选
+        function filterByTag(tagKeyword) {
+            const activeCategory = document.querySelector('.category-tab.active').dataset.category;
+            filterGallery(activeCategory);
+        }
+
+        // 注意：上传相关函数（预览、上传、重置）已在新的独立实现中定义
+        // 此处移除旧实现以避免冲突
+        console.log('旧的上传相关函数已移除，使用新的独立实现');
+
+        // 打开大图预览
+        function openLightbox(imageSrc, imageAlt) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImage = document.getElementById('lightboxImage');
+            
+            lightboxImage.src = imageSrc;
+            lightboxImage.alt = imageAlt;
+            lightbox.style.display = 'flex';
+        }
+
+        // 切换点赞状态
+        function toggleLike(imageId, likeBtn) {
+            const image = galleryData.find(item => item.id === imageId);
+            if (image) {
+                image.liked = !image.liked;
+                image.likes += image.liked ? 1 : -1;
+                
+                // 更新UI
+                if (image.liked) {
+                    likeBtn.classList.add('liked');
+                } else {
+                    likeBtn.classList.remove('liked');
+                }
+                likeBtn.querySelector('i').nextSibling.textContent = ` ${image.likes}`;
+                
+                // 如果当前是已点赞分类，需要重新筛选
+                const activeCategory = document.querySelector('.category-tab.active').dataset.category;
+                if (activeCategory === 'liked') {
+                    filterGallery(activeCategory);
+                }
+            }
+        }
+
+        // 高亮当前页面
+        function highlightCurrentPage(pageName) {
+            const navLinks = document.querySelectorAll('#navbar a');
+            navLinks.forEach(link => {
+                if (link.href.includes(pageName)) {
+                    link.classList.add('active');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

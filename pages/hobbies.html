@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的兴趣爱好</title>
+    <link rel="stylesheet" href="../css/hobbies.css">
+</head>
+<body>
+    <div class="hobbies-container">
+        <header class="hobbies-header">
+            <a href="../index.html" class="home-link">🏠 个人成长空间</a>
+            <h1>我的兴趣爱好</h1>
+            <p>记录和分享我的兴趣爱好和技能发展</p>
+        </header>
+        
+        <div class="stats-panel">
+            <div class="stat-card">
+                <h3>总兴趣数</h3>
+                <div class="number" id="total-hobbies">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>活跃兴趣</h3>
+                <div class="number" id="active-hobbies">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>成就次数</h3>
+                <div class="number" id="total-achievements">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>总投入小时</h3>
+                <div class="number" id="total-hours">0</div>
+            </div>
+        </div>
+        
+        <div class="categories">
+            <button class="category-btn active" data-category="all">全部</button>
+            <button class="category-btn" data-category="运动健身">运动健身</button>
+            <button class="category-btn" data-category="艺术创作">艺术创作</button>
+            <button class="category-btn" data-category="科技数码">科技数码</button>
+            <button class="category-btn" data-category="阅读学习">阅读学习</button>
+            <button class="category-btn" data-category="其他爱好">其他爱好</button>
+        </div>
+        
+        <div class="hobbies-grid" id="hobbies-grid">
+            <!-- 兴趣爱好卡片将通过JavaScript动态生成 -->
+        </div>
+        
+        <div class="pagination">
+            <button class="pagination-btn" id="prev-page" disabled>上一页</button>
+            <span id="page-info">第 1 页</span>
+            <button class="pagination-btn" id="next-page">下一页</button>
+        </div>
+        
+        <button class="add-hobby-btn" id="add-hobby-btn">+ 添加兴趣爱好</button>
+    </div>
+    
+    <!-- 引入JavaScript -->
+    <script src="../js/pages/hobbiesSimple.js"></script>
+</body>
+</html>

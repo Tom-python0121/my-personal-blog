@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>调试 localStorage 和图片路径</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 14px;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        .btn-success {
+            background: #28a745;
+        }
+        .btn-success:hover {
+            background: #218838;
+        }
+        .image-test {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .image-item {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+        }
+        .image-item img {
+            max-width: 100%;
+            max-height: 300px;
+            object-fit: contain;
+            border: 1px solid #eee;
+        }
+        .image-path {
+            font-family: monospace;
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+            word-break: break-all;
+        }
+        .action-buttons {
+            margin: 20px 0;
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            background: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>调试 localStorage 和图片路径</h1>
+        
+        <div class="action-buttons">
+            <button class="btn" id="showStorage">显示 localStorage 数据</button>
+            <button class="btn btn-danger" id="clearStorage">清除 localStorage 数据</button>
+            <button class="btn btn-success" id="setTestData">设置测试小狗数据</button>
+        </div>
+        
+        <div id="storageStatus" class="status">点击按钮查看或修改 localStorage 数据</div>
+        
+        <div id="storageContent" style="display:none;">
+            <h2>localStorage 内容</h2>
+            <pre id="storageDump"></pre>
+        </div>
+        
+        <h2>图片测试</h2>
+        <div class="image-test">
+            <div class="image-item">
+                <img src="images/puppy_1.jpg" alt="小狗图片1" id="testImg1">
+                <div class="image-path">路径: images/puppy_1.jpg</div>
+            </div>
+            <div class="image-item">
+                <img src="images/puppy_2.jpg" alt="小狗图片2" id="testImg2">
+                <div class="image-path">路径: images/puppy_2.jpg</div>
+            </div>
+            <div class="image-item">
+                <img src="images/puppy_3.jpg" alt="小狗图片3" id="testImg3">
+                <div class="image-path">路径: images/puppy_3.jpg</div>
+            </div>
+        </div>
+        
+        <h2>宠物页面图片路径测试</h2>
+        <div class="image-test">
+            <div class="image-item">
+                <img src="../images/puppy_1.jpg" alt="宠物页面图片1" id="testImgPet1">
+                <div class="image-path">路径: ../images/puppy_1.jpg (宠物页面使用的路径)</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 显示 localStorage 数据
+        document.getElementById('showStorage').addEventListener('click', function() {
+            try {
+                const pets = localStorage.getItem('personal_growth_pets');
+                const storageDump = document.getElementById('storageDump');
+                const storageContent = document.getElementById('storageContent');
+                const storageStatus = document.getElementById('storageStatus');
+                
+                if (pets) {
+                    const parsed = JSON.parse(pets);
+                    storageDump.textContent = JSON.stringify(parsed, null, 2);
+                    storageStatus.textContent = 'localStorage 中存在宠物数据';
+                } else {
+                    storageDump.textContent = '宠物数据不存在';
+                    storageStatus.textContent = 'localStorage 中没有宠物数据';
+                }
+                storageContent.style.display = 'block';
+            } catch (error) {
+                document.getElementById('storageStatus').textContent = '读取失败: ' + error.message;
+            }
+        });
+        
+        // 清除 localStorage 数据
+        document.getElementById('clearStorage').addEventListener('click', function() {
+            if (confirm('确定要清除宠物数据吗？')) {
+                localStorage.removeItem('personal_growth_pets');
+                document.getElementById('storageStatus').textContent = '已清除 localStorage 数据';
+                document.getElementById('storageContent').style.display = 'none';
+            }
+        });
+        
+        // 设置测试小狗数据
+        document.getElementById('setTestData').addEventListener('click', function() {
+            try {
+                // 使用绝对正确的相对路径 - 从pages目录引用
+                const puppyImages = [
+                    '../images/puppy_1.jpg',
+                    '../images/puppy_2.jpg',
+                    '../images/puppy_3.jpg'
+                ];
+
+                const petData = {
+                    id: '1',
+                    name: '小白',
+                    breed: '混血小狗',
+                    birthDate: '2023-06-01',
+                    gender: '公',
+                    color: '白色',
+                    weight: '8kg',
+                    personality: ['活泼', '友好', '聪明'],
+                    avatar: puppyImages[0],
+                    photos: puppyImages.map((url, index) => ({
+                        id: `photo_${Date.now()}_${index}`,
+                        url: url,
+                        date: new Date().toISOString().split('T')[0],
+                        description: `可爱的小狗照片 ${index + 1}`,
+                        likeCount: Math.floor(Math.random() * 5) + 1,
+                        liked: Math.random() > 0.5
+                    }))
+                };
+
+                localStorage.setItem('personal_growth_pets', JSON.stringify([petData]));
+                document.getElementById('storageStatus').textContent = '已设置测试小狗数据';
+                
+                // 自动显示存储内容
+                document.getElementById('showStorage').click();
+                
+                alert('测试小狗数据已设置！请刷新宠物页面查看效果。');
+            } catch (error) {
+                document.getElementById('storageStatus').textContent = '设置失败: ' + error.message;
+            }
+        });
+        
+        // 图片错误处理
+        const images = document.querySelectorAll('img');
+        images.forEach(img => {
+            img.addEventListener('error', function(e) {
+                this.parentNode.classList.add('error');
+                this.alt = '图片加载失败: ' + this.src;
+                console.error('图片加载失败:', this.src);
+            });
+        });
+    </script>
+</body>
+</html>

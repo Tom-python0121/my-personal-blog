@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的旅程 - 个人成长空间</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- ECharts 5 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="../index.html" class="logo">个人成长空间</a>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="container">
+        <section class="map-section">
+            <h1 class="section-title">我的旅程地图</h1>
+            
+            <!-- 中国地图容器 -->
+            <div id="china-map" class="map-container"></div>
+            
+            <!-- 新增旅程按钮 -->
+            <button id="add-trip-btn" class="btn btn-primary">
+                <i class="fas fa-plus"></i> 新增旅程
+            </button>
+        </section>
+    </main>
+
+    <!-- 新增旅程弹窗 -->
+    <div id="add-trip-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>新增旅程</h2>
+                <button id="close-modal-btn" class="close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="add-trip-form">
+                    <div class="form-group">
+                        <label for="province">省份名称</label>
+                        <input type="text" id="province" name="province" placeholder="请输入省份名称" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="travel-date">旅行时间</label>
+                        <input type="text" id="travel-date" name="travel-date" placeholder="例如：2023年10月" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="rating">喜欢程度</label>
+                        <div class="rating">
+                            <i class="fas fa-star" data-rating="1"></i>
+                            <i class="fas fa-star" data-rating="2"></i>
+                            <i class="fas fa-star" data-rating="3"></i>
+                            <i class="fas fa-star" data-rating="4"></i>
+                            <i class="fas fa-star" data-rating="5"></i>
+                            <input type="hidden" id="rating" name="rating" value="3">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="travel-mates">同行人</label>
+                        <input type="text" id="travel-mates" name="travel-mates" placeholder="例如：家人、朋友等">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="feelings">感想</label>
+                        <textarea id="feelings" name="feelings" rows="4" placeholder="记录下你的旅程感想..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="cancel-add-btn" class="btn btn-secondary">取消</button>
+                <button id="submit-trip-btn" class="btn btn-primary">保存旅程</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 遮罩层 -->
+    <div id="overlay" class="overlay"></div>
+
+    <!-- JavaScript -->
+    <script type="module">
+        // 导入模块
+        import { mapModule } from '../js/modules/mapModule.js';
+        import { trips } from '../js/utils/trips.js';
+        
+        // 页面状态
+        let selectedProvince = null;
+        let currentRating = 0;
+        
+        /**
+         * 初始化省份下拉选择框
+         */
+        const initProvinceSelect = () => {
+            const select = document.getElementById('province');
+            const allProvinces = trips.getAllProvinces();
+            
+            // 添加选项
+            allProvinces.forEach(province => {
+                const option = document.createElement('option');
+                option.value = province;
+                option.textContent = province;
+                select.appendChild(option);
+            });
+        };
+        
+        /**
+         * 初始化星级评分组件
+         */
+        const initRating = () => {
+            const stars = document.querySelectorAll('.rating .fa-star');
+            
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    currentRating = parseInt(star.getAttribute('data-rating'));
+                    updateStars();
+                    document.getElementById('rating').value = currentRating;
+                });
+            });
+            
+            /**
+             * 更新星级显示
+             */
+            const updateStars = () => {
+                stars.forEach(star => {
+                    const rating = parseInt(star.getAttribute('data-rating'));
+                    if (rating <= currentRating) {
+                        star.style.color = '#FFC107';
+                    } else {
+                        star.style.color = '#E0E0E0';
+                    }
+                });
+            };
+        };
+        
+        /**
+         * 显示新增旅程弹窗
+         */
+        function showAddTripModal() {
+            const modal = document.getElementById('add-trip-modal');
+            const overlay = document.getElementById('overlay');
+            
+            modal.classList.add('show');
+            overlay.classList.add('show');
+            
+            // 重置表单
+            document.getElementById('add-trip-form').reset();
+            currentRating = 3;
+            document.getElementById('rating').value = 3;
+            
+            // 重置星级
+            const stars = document.querySelectorAll('.rating .fa-star');
+            stars.forEach(star => {
+                const rating = parseInt(star.getAttribute('data-rating'));
+                if (rating <= currentRating) {
+                    star.style.color = '#FFC107';
+                } else {
+                    star.style.color = '#E0E0E0';
+                }
+            });
+        }
+        
+        /**
+         * 隐藏新增旅程弹窗
+         */
+        function hideAddTripModal() {
+            const modal = document.getElementById('add-trip-modal');
+            const overlay = document.getElementById('overlay');
+            
+            modal.classList.remove('show');
+            overlay.classList.remove('show');
+        }
+        
+        /**
+         * 提交新增旅程
+         */
+        function submitTrip() {
+            // 获取表单数据
+            const province = document.getElementById('province').value.trim();
+            const travelDate = document.getElementById('travel-date').value.trim();
+            const rating = parseInt(document.getElementById('rating').value);
+            const travelMates = document.getElementById('travel-mates').value.trim();
+            const feelings = document.getElementById('feelings').value.trim();
+            
+            // 验证必填字段
+            if (!province || !travelDate) {
+                alert('请填写省份名称和旅行时间');
+                return;
+            }
+            
+            // 创建旅程数据对象
+            const tripData = {
+                province,
+                travelDate,
+                rating,
+                travelMates: travelMates || '',
+                feelings: feelings || '',
+                photos: [],
+                updatedAt: new Date().toISOString()
+            };
+            
+            try {
+                // 使用trips服务保存数据
+                const success = trips.saveTrip(tripData);
+                
+                if (success) {
+                    // 隐藏弹窗
+                    hideAddTripModal();
+                    
+                    // 更新地图
+                    mapModule.updateMap();
+                    
+                    // 跳转到详情页
+                    window.location.href = `trip-detail.html?province=${encodeURIComponent(province)}`;
+                } else {
+                    alert('保存失败，请重试');
+                }
+            } catch (error) {
+                console.error('保存旅程失败:', error);
+                alert('保存失败，请重试');
+            }
+        }
+        
+        /**
+         * 切换移动端菜单
+         */
+        function toggleMobileMenu() {
+            const mobileMenu = document.querySelector('.mobile-menu');
+            mobileMenu.classList.toggle('show');
+        }
+        
+        /**
+         * 页面初始化
+         */
+        const initPage = async () => {
+            try {
+                // 初始化省份选择框
+                initProvinceSelect();
+                
+                // 初始化星级评分
+                initRating();
+                
+                // 初始化地图
+                await mapModule.init('china-map');
+                
+                // 初始化事件监听器
+                // 新增旅程按钮点击事件
+                document.getElementById('add-trip-btn').addEventListener('click', showAddTripModal);
+                
+                // 关闭弹窗按钮点击事件
+                document.getElementById('close-modal-btn').addEventListener('click', hideAddTripModal);
+                document.getElementById('cancel-add-btn').addEventListener('click', hideAddTripModal);
+                
+                // 遮罩层点击事件
+                document.getElementById('overlay').addEventListener('click', hideAddTripModal);
+                
+                // 保存旅程按钮点击事件
+                document.getElementById('submit-trip-btn').addEventListener('click', submitTrip);
+                
+                // 移动端菜单已移除，相关事件监听器也已移除
+                
+                console.log('旅程页面初始化成功');
+            } catch (error) {
+                console.error('页面初始化失败:', error);
+                document.getElementById('china-map').innerHTML = 
+                    '<div class="map-error"><i class="fas fa-map-marked-alt"></i> 地图加载失败，请稍后重试</div>';
+            }
+        };
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', initPage);
+        
+        // 页面卸载时清理资源
+        window.addEventListener('unload', () => {
+            try {
+                if (mapModule && typeof mapModule.destroy === 'function') {
+                    mapModule.destroy();
+                }
+            } catch (error) {
+                console.log('地图清理时的非关键错误:', error);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试小狗图片</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .gallery-item {
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+        }
+        .gallery-item p {
+            padding: 15px;
+            margin: 0;
+            background: #f8f9fa;
+        }
+        .path-info {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>小狗图片测试页面</h1>
+    <p>直接测试下载的小狗图片是否可访问</p>
+    
+    <div class="gallery">
+        <!-- 测试根目录相对路径 -->
+        <div class="gallery-item">
+            <img src="images/puppy_1.jpg" alt="小狗图片1">
+            <p>路径: images/puppy_1.jpg</p>
+        </div>
+        <div class="gallery-item">
+            <img src="images/puppy_2.jpg" alt="小狗图片2">
+            <p>路径: images/puppy_2.jpg</p>
+        </div>
+        <div class="gallery-item">
+            <img src="images/puppy_3.jpg" alt="小狗图片3">
+            <p>路径: images/puppy_3.jpg</p>
+        </div>
+    </div>
+    
+    <div class="path-info">
+        <h3>路径说明：</h3>
+        <p>✅ 从根目录访问: images/puppy_1.jpg</p>
+        <p>✅ 从pages目录访问: ../images/puppy_1.jpg</p>
+        <p>✅ 从js目录访问: ../images/puppy_1.jpg</p>
+    </div>
+</body>
+</html>

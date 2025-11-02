@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑兴趣爱好</title>
+    <link rel="stylesheet" href="../css/hobbies.css">
+    <!-- 页面样式已移至外部CSS文件 -->
+</head>
+<body>
+    <div class="edit-container">
+        <div class="edit-header">
+            <a href="../index.html" class="home-link">🏠 个人成长空间</a>
+            <button class="back-btn" id="back-btn">
+                ← 返回
+            </button>
+            <button class="save-btn" id="save-btn">保存</button>
+        </div>
+        
+        <h1 class="edit-title" id="page-title">添加新兴趣爱好</h1>
+        
+      <!-- 编辑表单 -->
+      <form id="hobby-form" class="hobby-form">
+        <!-- 基本信息 -->
+        <section class="form-section">
+          <h2 class="section-title">基本信息</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="hobby-name" class="form-label">名称</label>
+              <input type="text" id="hobby-name" class="form-input" placeholder="输入兴趣爱好名称" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="hobby-category" class="form-label">分类</label>
+              <select id="hobby-category" class="form-select">
+                <option value="运动健身">运动健身</option>
+                <option value="艺术创作">艺术创作</option>
+                <option value="科技数码">科技数码</option>
+                <option value="阅读学习">阅读学习</option>
+                <option value="其他爱好">其他爱好</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="hobby-start-date" class="form-label">开始日期</label>
+              <input type="date" id="hobby-start-date" class="form-input" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="hobby-total-hours" class="form-label">总时长(小时)</label>
+              <input type="number" id="hobby-total-hours" class="form-input" min="0" step="0.1" placeholder="0.0">
+            </div>
+            
+            <div class="form-group">
+              <label for="hobby-update-frequency" class="form-label">更新频率</label>
+              <select id="hobby-update-frequency" class="form-select">
+                <option value="每天">每天</option>
+                <option value="每周">每周</option>
+                <option value="每月">每月</option>
+                <option value="偶尔">偶尔</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">状态</label>
+              <div class="form-radio-group">
+                <label class="radio-label">
+                  <input type="radio" name="hobby-status" id="hobby-status-active" value="active" checked>
+                  <span>活跃中</span>
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="hobby-status" id="hobby-status-inactive" value="inactive">
+                  <span>已暂停</span>
+                </label>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">评分</label>
+              <div id="star-rating" class="star-rating">
+                <!-- 星级评分会通过 JavaScript 动态生成 -->
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <!-- 详细描述 -->
+        <section class="form-section">
+          <h2 class="section-title">详细描述</h2>
+          <div class="form-group">
+            <textarea id="hobby-description" class="form-textarea" rows="6" placeholder="详细描述您的兴趣爱好，包括如何开始、有什么收获等..." required></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="hobby-skills" class="form-label">相关技能（用逗号或顿号分隔）</label>
+            <input type="text" id="hobby-skills" class="form-input" placeholder="例如：摄影、修图、后期制作">
+          </div>
+        </section>
+        
+        <!-- 图片上传 -->
+        <section class="form-section">
+          <h2 class="section-title">图片上传</h2>
+          <div id="photos-upload" class="upload-area">
+            <svg class="upload-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19.35,10.04C18.67,6.59,15.64,4,12,4C9.11,4,6.6,5.64,5.35,8.04C2.34,8.36,0,10.91,0,14A6,6,0,0,0,6,20H19A5,5,0,0,0,24,15C24,12.36,21.95,10.22,19.35,10.04ZM19,18H6A4,4,0,0,1,2,14c0-2.05,1.53-3.76,3.56-3.97l1.07-0.11l0.5-0.95C8.08,7.14,9.94,6,12,6A4.01,4.01,0,0,1,16,10h2a2,2,0,0,0,2-2V6a2,2,0,0,0-2-2h-2V1h-2V4H9V1H7V4H5A2,2,0,0,0,3,6V8h2V6A2,2,0,0,1,7,4h2v2A4.01,4.01,0,0,1,12,2a6,6,0,0,0-6,6c0,2.77,2.2,5.05,4.93,5.42l0.3,0.05l0.5,0.86C10.6,16.65,11.32,17,12,17s1.4-0.35,1.77-0.87l0.5-0.86l0.3-0.05C16.8,13.05,19,10.77,19,8a6,6,0,0,0-6-6,4,4,0,0,1,4,4v2a2,2,0,0,0,2,2h2a2,2,0,0,1,2,2A4,4,0,0,1,19,18Z" />
+            </svg>
+            <p>点击或拖拽图片到这里上传</p>
+            <p class="upload-hint">支持 JPG、PNG、WebP 格式，单个文件不超过 5MB</p>
+            <input type="file" id="photos-input" class="upload-input" accept="image/*" multiple hidden>
+          </div>
+          
+          <!-- 图片预览 -->
+          <div id="upload-preview" class="upload-preview">
+            <!-- 预览图会通过 JavaScript 动态生成 -->
+          </div>
+        </section>
+        
+        <!-- 时间轴 -->
+        <section class="form-section">
+          <div class="section-header">
+            <h2 class="section-title">成长时间轴</h2>
+            <button type="button" id="add-timeline-item" class="btn btn-outline">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M19,13H13V19H11V13H5V11H13V5H13V11H19V13Z" />
+              </svg>
+              添加事件
+            </button>
+          </div>
+          
+          <div id="timeline-items" class="timeline-items">
+            <!-- 时间轴项目会通过 JavaScript 动态生成 -->
+          </div>
+        </section>
+        </form>
+    </div>
+    
+    <script src="../js/pages/hobbyEditSimple.js"></script>
+</body>
+</html>

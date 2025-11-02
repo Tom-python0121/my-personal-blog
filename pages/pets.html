@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宠物管理 - 个人成长网站</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/pets.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav id="main-nav">
+        <!-- 导航栏内容将通过JS加载 -->
+    </nav>
+
+    <main class="container">
+        <!-- 宠物头部信息 -->
+        <div class="pet-header">
+            <div class="pet-avatar">
+                <img src="../assets/images/placeholder.svg" alt="宠物头像" id="pet-avatar-img">
+            </div>
+            <div class="pet-basic-info">
+                <h1 id="pet-name">花花</h1>
+                <div class="pet-meta">
+                    <span class="meta-item">品种: 英短蓝白</span>
+                    <span class="meta-item">年龄: 4岁6个月</span>
+                    <span class="meta-item">性别: 母</span>
+                </div>
+            </div>
+            <div class="pet-actions">
+                <button class="btn btn-primary" id="edit-pet-btn">
+                    <i class="fas fa-edit"></i> 编辑
+                </button>
+                <button class="btn btn-danger" id="delete-pet-btn">
+                    <i class="fas fa-trash-alt"></i> 删除
+                </button>
+            </div>
+        </div>
+
+        <!-- Tab导航 -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="profile">
+                <i class="fas fa-id-card"></i> 档案
+            </button>
+            <button class="tab-btn" data-tab="growth">
+                <i class="fas fa-chart-line"></i> 成长记录
+            </button>
+            <button class="tab-btn" data-tab="photos">
+                <i class="fas fa-images"></i> 照片合集
+            </button>
+            <button class="tab-btn" data-tab="diary">
+                <i class="fas fa-calendar-alt"></i> 日常点滴
+            </button>
+        </div>
+
+        <!-- Tab内容区域 -->
+        <div class="tab-contents">
+            <!-- 档案Tab -->
+            <div class="tab-content active" id="profile-content">
+                <div class="profile-grid">
+                    <!-- 基础信息 -->
+                    <div class="info-card">
+                        <h3>基础信息</h3>
+                        <div class="info-item">
+                            <span class="label">宠物名称:</span>
+                            <span class="value">花花</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">品种:</span>
+                            <span class="value">英短蓝白</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">出生日期:</span>
+                            <span class="value">2021-03-10</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">性别:</span>
+                            <span class="value">母</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">颜色:</span>
+                            <span class="value">白色和蓝色</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">体重:</span>
+                            <span class="value">3.8kg</span>
+                        </div>
+                    </div>
+
+                    <!-- 个性特点 -->
+                    <div class="info-card">
+                        <h3>个性特点</h3>
+                        <div class="tags">
+                            <span class="tag">粘人</span>
+                            <span class="tag">活泼</span>
+                            <span class="tag">撒娇</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 体重变化图表 -->
+                <div class="chart-container">
+                    <h3>体重变化趋势</h3>
+                    <div id="weight-chart" style="width: 100%; height: 400px;"></div>
+                </div>
+            </div>
+
+            <!-- 成长记录Tab -->
+            <div class="tab-content" id="growth-content">
+                <div class="growth-timeline">
+                    <!-- 成长记录将通过JS动态加载 -->
+                </div>
+                <button class="btn btn-primary add-growth-btn">
+                    <i class="fas fa-plus"></i> 添加成长记录
+                </button>
+            </div>
+
+            <!-- 照片合集Tab -->
+            <div class="tab-content" id="photos-content">
+                <div class="photo-filter">
+                    <select id="year-filter">
+                        <option value="all">全部年份</option>
+                    </select>
+                    <button class="btn btn-secondary" id="slideshow-btn">
+                        <i class="fas fa-play"></i> 幻灯片
+                    </button>
+                </div>
+                <div class="photo-masonry">
+                    <!-- 照片将通过JS动态加载 -->
+                </div>
+                <button class="btn btn-primary add-photo-btn">
+                    <i class="fas fa-plus"></i> 添加照片
+                </button>
+            </div>
+
+            <!-- 日常点滴Tab -->
+            <div class="tab-content" id="diary-content">
+                <div class="calendar-container">
+                    <!-- 月历将通过JS动态生成 -->
+                </div>
+                <div class="diary-entries">
+                    <!-- 日记条目将通过JS动态加载 -->
+                </div>
+                <button id="add-diary-btn" class="btn btn-primary add-diary-btn">
+                    <i class="fas fa-plus"></i> 添加日记
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <!-- 页脚内容 -->
+    </footer>
+
+    <script type="module" src="../js/pages/pets-main.js"></script>
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的 - 个人成长空间</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .profile-container {
+      padding: var(--spacing-xl) 0;
+    }
+    
+    .profile-header {
+      text-align: center;
+      margin-bottom: var(--spacing-xl);
+    }
+    
+    .profile-avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin: 0 auto var(--spacing-md);
+      border: 5px solid var(--primary-color);
+    }
+    
+    .profile-name {
+      font-size: var(--font-size-2xl);
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .profile-info {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .info-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: var(--spacing-md);
+      padding: var(--spacing-md);
+      background-color: var(--bg-secondary);
+      border-radius: 8px;
+    }
+    
+    .info-label {
+      width: 100px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+    
+    .info-value {
+      flex: 1;
+    }
+    
+    .profile-tags {
+      margin: var(--spacing-md) 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--spacing-sm);
+    }
+    
+    .tag {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 16px;
+      font-size: var(--font-size-sm);
+      display: inline-block;
+    }
+    
+    .edit-btn {
+      background-color: var(--primary-color);
+      color: white;
+      padding: var(--spacing-sm) var(--spacing-md);
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .edit-btn:hover {
+      background-color: #2980b9;
+    }
+    
+    .save-btn {
+      background-color: var(--secondary-color);
+    }
+    
+    .save-btn:hover {
+      background-color: #27ae60;
+    }
+    
+    .cancel-btn {
+      background-color: var(--text-secondary);
+    }
+    
+    .cancel-btn:hover {
+      background-color: #666;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: var(--spacing-md);
+      justify-content: center;
+      margin-top: var(--spacing-lg);
+    }
+    
+    .edit-input {
+      width: 100%;
+      padding: var(--spacing-sm);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+    }
+    
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="nav">
+    <div class="nav-container container">
+      <a href="nav.html" class="nav-logo">
+        <i class="fas fa-home"></i> 成长空间
+      </a>
+      <button class="hamburger-menu" id="menu-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="nav-menu" id="nav-menu">
+        <a href="my-profile.html" class="nav-item"><i class="fas fa-user"></i> 我的</a>
+        <a href="trips.html" class="nav-item"><i class="fas fa-map-marked-alt"></i> 旅程</a>
+        <a href="gallery.html" class="nav-item"><i class="fas fa-images"></i> 相册</a>
+        <a href="reading.html" class="nav-item"><i class="fas fa-book"></i> 读书</a>
+        <a href="hobbies.html" class="nav-item"><i class="fas fa-paint-brush"></i> 兴趣爱好</a>
+        <a href="pets.html" class="nav-item"><i class="fas fa-paw"></i> 宠物</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主体内容 -->
+  <main class="container profile-container">
+    <section class="profile-header">
+      <img id="avatar-display" class="profile-avatar" src="../assets/images/head.jpg" alt="用户头像">
+      <h1 class="profile-name" id="name-display">闪光盼盼</h1>
+      <p id="bio-display">开心就好</p>
+      <div class="profile-tags" id="tags-display">
+        <span class="tag">开朗</span>
+        <span class="tag">乐观</span>
+        <span class="tag">热爱生活</span>
+      </div>
+      <button id="edit-profile-btn" class="edit-btn">
+        <i class="fas fa-edit"></i> 编辑资料
+      </button>
+    </section>
+
+    <section class="profile-info card">
+      <div class="info-item">
+        <div class="info-label">出生年月</div>
+        <div class="info-value" id="birthday-display">1994年1月</div>
+      </div>
+      
+      <div class="info-item">
+        <div class="info-label">所在城市</div>
+        <div class="info-value" id="city-display">广西南宁</div>
+      </div>
+    </section>
+
+    <!-- 编辑表单（默认隐藏） -->
+    <section id="edit-form" class="card hidden">
+      <h2>编辑个人信息</h2>
+      
+      <div class="form-group">
+        <label class="form-label" for="edit-name">昵称</label>
+        <input type="text" id="edit-name" class="form-input">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label" for="edit-birthday">出生年月</label>
+        <input type="date" id="edit-birthday" class="form-input">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label" for="edit-city">所在城市</label>
+        <input type="text" id="edit-city" class="form-input">
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label" for="edit-bio">个性签名</label>
+        <textarea id="edit-bio" class="form-textarea"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label" for="edit-tags">个性标签</label>
+        <input type="text" id="edit-tags" class="form-input" placeholder="请输入标签，用逗号分隔">
+        <p class="form-hint">标签之间用逗号分隔，最多可添加5个标签</p>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label" for="edit-avatar">更换头像</label>
+        <input type="file" id="edit-avatar" class="form-input" accept="image/*">
+      </div>
+      
+      <div class="action-buttons">
+        <button id="save-profile-btn" class="save-btn">保存</button>
+        <button id="cancel-edit-btn" class="cancel-btn">取消</button>
+      </div>
+    </section>
+  </main>
+
+  <script type="module">
+    // 导入存储管理模块
+    import StorageManager from '../js/utils/storage.js';
+
+    // DOM 元素
+    const editProfileBtn = document.getElementById('edit-profile-btn');
+    const editForm = document.getElementById('edit-form');
+    const saveProfileBtn = document.getElementById('save-profile-btn');
+    const cancelEditBtn = document.getElementById('cancel-edit-btn');
+    
+    // 显示元素
+    const nameDisplay = document.getElementById('name-display');
+    const birthdayDisplay = document.getElementById('birthday-display');
+    const cityDisplay = document.getElementById('city-display');
+    const bioDisplay = document.getElementById('bio-display');
+    const avatarDisplay = document.getElementById('avatar-display');
+    const tagsDisplay = document.getElementById('tags-display');
+    
+    // 编辑表单元素
+    const editName = document.getElementById('edit-name');
+    const editBirthday = document.getElementById('edit-birthday');
+    const editCity = document.getElementById('edit-city');
+    const editBio = document.getElementById('edit-bio');
+    const editTags = document.getElementById('edit-tags');
+    const editAvatar = document.getElementById('edit-avatar');
+
+    // 初始化默认用户信息
+    const DEFAULT_USER_INFO = {
+      name: '闪光盼盼',
+      birthday: '1994年1月',
+      city: '广西南宁',
+      bio: '开心就好',
+      avatar: '../assets/images/head.jpg',
+      tags: ['开朗', '乐观', '热爱生活']
+    };
+
+    // 从localStorage加载用户信息
+    function loadUserProfile() {
+      // 检查是否已有用户信息，如果没有则设置默认值
+      const existingInfo = StorageManager.getItem(StorageManager.KEYS.USER_INFO);
+      const userInfo = existingInfo || DEFAULT_USER_INFO;
+      
+      // 如果是首次访问，保存默认信息到localStorage
+      if (!existingInfo) {
+        StorageManager.setItem(StorageManager.KEYS.USER_INFO, DEFAULT_USER_INFO);
+      }
+      
+      // 更新显示
+      nameDisplay.textContent = userInfo.name;
+      birthdayDisplay.textContent = userInfo.birthday || '未设置';
+      cityDisplay.textContent = userInfo.city || '未设置';
+      bioDisplay.textContent = userInfo.bio || '这里是个性签名';
+      
+      // 显示个性标签
+      displayTags(userInfo.tags || DEFAULT_USER_INFO.tags);
+      
+      // 头像处理：优先使用用户自定义头像，否则使用默认头像
+      if (userInfo.avatar && userInfo.avatar !== DEFAULT_USER_INFO.avatar) {
+        avatarDisplay.src = userInfo.avatar;
+      } else {
+        avatarDisplay.src = DEFAULT_USER_INFO.avatar;
+      }
+    }
+    
+    // 显示个性标签
+    function displayTags(tags) {
+      // 清空现有标签
+      tagsDisplay.innerHTML = '';
+      
+      // 如果没有标签，使用默认标签
+      const tagsToDisplay = tags && tags.length > 0 ? tags : DEFAULT_USER_INFO.tags;
+      
+      // 创建并添加标签元素
+      tagsToDisplay.forEach(tag => {
+        const tagElement = document.createElement('span');
+        tagElement.className = 'tag';
+        tagElement.textContent = tag;
+        tagsDisplay.appendChild(tagElement);
+      });
+    }
+
+    // 打开编辑表单
+    function openEditForm() {
+      const userInfo = StorageManager.getItem(StorageManager.KEYS.USER_INFO, DEFAULT_USER_INFO);
+      
+      // 填充表单
+      editName.value = userInfo.name || DEFAULT_USER_INFO.name;
+      
+      // 处理日期格式：将'YYYY年MM月'转换为'YYYY-MM'以便在date输入框中使用
+      if (userInfo.birthday && userInfo.birthday.includes('年')) {
+        const match = userInfo.birthday.match(/(\d{4})年(\d{1,2})月/);
+        if (match) {
+          const year = match[1];
+          const month = match[2].padStart(2, '0');
+          editBirthday.value = `${year}-${month}`;
+        }
+      } else {
+        editBirthday.value = '';
+      }
+      
+      editCity.value = userInfo.city || DEFAULT_USER_INFO.city;
+      editBio.value = userInfo.bio || DEFAULT_USER_INFO.bio;
+      
+      // 填充个性标签，用逗号连接数组
+      editTags.value = (userInfo.tags && userInfo.tags.length > 0) ? 
+        userInfo.tags.join(', ') : 
+        DEFAULT_USER_INFO.tags.join(', ');
+      
+      // 显示表单，隐藏编辑按钮
+      editForm.classList.remove('hidden');
+      editProfileBtn.classList.add('hidden');
+    }
+
+    // 关闭编辑表单
+    function closeEditForm() {
+      editForm.classList.add('hidden');
+      editProfileBtn.classList.remove('hidden');
+    }
+
+    // 保存用户信息
+    function saveUserProfile() {
+      // 处理个性标签：将逗号分隔的字符串转换为数组，最多保留5个标签
+      let tags = [];
+      if (editTags.value.trim()) {
+        tags = editTags.value.split(/[,，]/).map(tag => tag.trim()).filter(tag => tag.length > 0);
+        // 限制最多5个标签
+        tags = tags.slice(0, 5);
+      }
+      
+      // 读取表单数据
+      const userInfo = {
+        name: editName.value.trim(),
+        // 将date输入框的'YYYY-MM'格式转换回'YYYY年MM月'格式
+        birthday: editBirthday.value ? 
+          `${editBirthday.value.split('-')[0]}年${editBirthday.value.split('-')[1]}月` : 
+          '',
+        city: editCity.value.trim(),
+        bio: editBio.value.trim(),
+        tags: tags,
+        avatar: '' // 将在下面单独处理
+      };
+      
+      // 处理头像上传
+      if (editAvatar.files && editAvatar.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          userInfo.avatar = e.target.result;
+          saveUserData(userInfo);
+        };
+        reader.readAsDataURL(editAvatar.files[0]);
+      } else {
+        // 如果没有选择新头像，保留原有头像或使用默认头像
+        const currentUserInfo = StorageManager.getItem(StorageManager.KEYS.USER_INFO, DEFAULT_USER_INFO);
+        userInfo.avatar = currentUserInfo.avatar || DEFAULT_USER_INFO.avatar;
+        saveUserData(userInfo);
+      }
+    }
+
+    // 保存用户数据到localStorage
+    function saveUserData(userInfo) {
+      // 保存数据
+      StorageManager.setItem(StorageManager.KEYS.USER_INFO, userInfo);
+      
+      // 刷新显示
+      loadUserProfile();
+      
+      // 关闭表单
+      closeEditForm();
+    }
+
+    // 事件监听器
+    editProfileBtn.addEventListener('click', openEditForm);
+    cancelEditBtn.addEventListener('click', closeEditForm);
+    saveProfileBtn.addEventListener('click', saveUserProfile);
+
+    // 移动端导航菜单切换
+    document.getElementById('menu-toggle').addEventListener('click', function() {
+      const navMenu = document.getElementById('nav-menu');
+      navMenu.classList.toggle('active');
+    });
+
+    // 高亮当前页面
+    function highlightCurrentPage() {
+      const currentPath = window.location.pathname;
+      const navItems = document.querySelectorAll('.nav-item');
+      
+      navItems.forEach(item => {
+        const itemPath = new URL(item.href).pathname;
+        if (currentPath.endsWith(itemPath)) {
+          item.classList.add('active');
+        }
+      });
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      loadUserProfile();
+      highlightCurrentPage();
+    });
+  </script>
+</body>
+</html>

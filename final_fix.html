@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>最终修复 - 宠物图片</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .info {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 500px;
+            margin: 20px auto;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>宠物小狗图片修复</h1>
+    <div class="info">
+        <p>这个页面将使用正确的相对路径设置宠物数据，然后自动跳转到宠物页面</p>
+        <p>图片路径将使用: <code>../images/puppy_1.jpg</code></p>
+    </div>
+    <button id="fixAndGoBtn">修复并前往宠物页面</button>
+
+    <script>
+        document.getElementById('fixAndGoBtn').addEventListener('click', function() {
+            // 使用绝对正确的相对路径 - 从pages目录引用
+            const puppyImages = [
+                '../images/puppy_1.jpg',
+                '../images/puppy_2.jpg',
+                '../images/puppy_3.jpg'
+            ];
+
+            // 创建完整的宠物数据
+            const petData = {
+                id: '1',
+                name: '小白',
+                breed: '混血小狗',
+                birthDate: '2023-06-01',
+                gender: '公',
+                color: '白色',
+                weight: '8kg',
+                personality: ['活泼', '友好', '聪明'],
+                avatar: puppyImages[0],
+                photos: puppyImages.map((url, index) => ({
+                    id: `photo_${Date.now()}_${index}`,
+                    url: url,
+                    date: new Date().toISOString().split('T')[0],
+                    description: `可爱的小狗照片 ${index + 1}`,
+                    likeCount: Math.floor(Math.random() * 5) + 1,
+                    liked: Math.random() > 0.5
+                }))
+            };
+
+            // 保存到localStorage
+            localStorage.setItem('personal_growth_pets', JSON.stringify([petData]));
+            console.log('宠物数据已设置:', petData);
+            
+            // 延迟跳转，确保数据已保存
+            setTimeout(() => {
+                window.location.href = 'pages/pets.html';
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

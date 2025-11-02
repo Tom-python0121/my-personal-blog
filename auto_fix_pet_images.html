@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动修复宠物图片</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .success {
+            background: rgba(29, 201, 144, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px solid #1dc990;
+        }
+        a {
+            color: #ffffff;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        a:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .loading {
+            font-size: 18px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>正在自动修复宠物图片数据...</h1>
+        <p class="loading">请稍候...</p>
+        
+        <div id="result" class="success" style="display: none;">
+            <h3>✅ 图片数据修复成功！</h3>
+            <p>宠物头像和照片已使用正确的相对路径设置</p>
+            <p><a href="pages/pets.html" target="_blank">点击查看宠物页面</a></p>
+        </div>
+    </div>
+
+    <script>
+        // 使用正确的相对路径 - 从pages目录引用images目录
+        const puppyImages = [
+            '../images/puppy_1.jpg',
+            '../images/puppy_2.jpg',
+            '../images/puppy_3.jpg'
+        ];
+
+        const descriptions = [
+            '可爱的小狗正面照',
+            '活泼的小狗玩耍中',
+            '小狗的侧面特写'
+        ];
+
+        const today = new Date().toISOString().split('T')[0];
+
+        // 创建完整的宠物数据对象
+        const petData = {
+            id: '1',
+            name: '小白',
+            breed: '混血小狗',
+            birthDate: '2023-06-01',
+            gender: '公',
+            color: '白色',
+            weight: '8kg',
+            personality: ['活泼', '友好', '聪明'],
+            avatar: puppyImages[0],
+            photos: puppyImages.map((url, index) => ({
+                id: `photo_${Date.now()}_${index}`,
+                url: url,
+                date: today,
+                description: descriptions[index],
+                likeCount: Math.floor(Math.random() * 10),
+                liked: Math.random() > 0.5
+            })),
+            growthRecords: [],
+            diaries: []
+        };
+
+        // 直接设置到localStorage
+        localStorage.setItem('personal_growth_pets', JSON.stringify([petData]));
+        
+        console.log('宠物数据已自动修复:', petData);
+        console.log('宠物头像路径:', petData.avatar);
+        console.log('照片路径:', petData.photos.map(p => p.url));
+        
+        // 显示成功信息
+        setTimeout(() => {
+            document.getElementById('result').style.display = 'block';
+        }, 1000);
+    </script>
+</body>
+</html>

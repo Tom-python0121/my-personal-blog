@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>修复宠物图片</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>修复宠物小狗图片</h1>
+    <p>点击下方按钮，将使用正确的图片路径更新宠物数据</p>
+    <button id="fixBtn">修复图片数据</button>
+    
+    <div id="result" class="success" style="display: none;">
+        <h3>✅ 图片数据修复成功！</h3>
+        <p>宠物图片已使用正确路径设置</p>
+        <p><a href="pages/pets.html" target="_blank">点击查看宠物页面</a></p>
+    </div>
+
+    <script>
+        document.getElementById('fixBtn').addEventListener('click', function() {
+            // 使用正确的路径 - 从pages目录引用images目录
+            const puppyImages = [
+                '../images/puppy_1.jpg',
+                '../images/puppy_2.jpg',
+                '../images/puppy_3.jpg'
+            ];
+
+            const descriptions = [
+                '可爱的小狗正面照',
+                '活泼的小狗玩耍中',
+                '小狗的侧面特写'
+            ];
+
+            const today = new Date().toISOString().split('T')[0];
+
+            // 创建完整的宠物数据对象
+            const petData = {
+                id: '1',
+                name: '小白',
+                breed: '混血小狗',
+                birthDate: '2023-06-01',
+                gender: '公',
+                color: '白色',
+                weight: '8kg',
+                personality: ['活泼', '友好', '聪明'],
+                avatar: puppyImages[0],
+                photos: puppyImages.map((url, index) => ({
+                    id: `photo_${Date.now()}_${index}`,
+                    url: url,
+                    date: today,
+                    description: descriptions[index],
+                    likeCount: Math.floor(Math.random() * 10),
+                    liked: Math.random() > 0.5
+                })),
+                growthRecords: [],
+                diaries: []
+            };
+
+            // 直接设置到localStorage
+            localStorage.setItem('personal_growth_pets', JSON.stringify([petData]));
+            
+            // 显示成功信息
+            document.getElementById('result').style.display = 'block';
+            
+            console.log('宠物数据已修复:', petData);
+        });
+    </script>
+</body>
+</html>
