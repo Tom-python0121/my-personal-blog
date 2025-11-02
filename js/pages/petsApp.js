@@ -94,6 +94,26 @@ class PetsApp {
                 self.handleAddDiary();
             });
         }
+        
+        // 添加成长记录按钮事件
+        document.addEventListener('click', function(e) {
+            var addGrowthBtn = e.target.closest('.add-growth-btn');
+            if (addGrowthBtn) {
+                self.handleAddGrowthRecord();
+            }
+        });
+        
+        // 添加照片按钮事件
+        document.addEventListener('click', function(e) {
+            var addPhotoBtn = e.target.closest('.add-photo-btn');
+            if (addPhotoBtn) {
+                // 滚动到上传表单区域
+                const uploadForm = document.querySelector('.photo-upload-form');
+                if (uploadForm) {
+                    uploadForm.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        });
     }
     
     /**
@@ -942,6 +962,174 @@ class PetsApp {
                 }
                 likeBtn.querySelector('span').textContent = updatedPhoto.likeCount;
             }
+        }
+    }
+    
+    /**
+     * 处理添加成长记录
+     */
+    handleAddGrowthRecord() {
+        // 移除之前的模态框（如果存在）
+        var existingModal = document.getElementById('add-growth-modal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+        
+        // 显示添加成长记录模态框
+        this.showAddGrowthModal();
+    }
+    
+    /**
+     * 显示添加成长记录模态框
+     */
+    showAddGrowthModal() {
+        // 获取当前日期
+        var today = new Date();
+        var year = today.getFullYear();
+        var month = String(today.getMonth() + 1).padStart(2, '0');
+        var day = String(today.getDate()).padStart(2, '0');
+        var dateStr = year + '-' + month + '-' + day;
+        
+        // 创建添加成长记录表单
+        var modalHTML = "<div id='add-growth-modal' class='modal-overlay'>" +
+            "<div class='modal-content'>" +
+                "<div class='modal-header'>" +
+                    "<h3>添加成长记录</h3>" +
+                    "<button id='close-growth-modal' class='close-btn'>×</button>" +
+                "</div>" +
+                "<form id='add-growth-form'>" +
+                    "<div class='form-group'>" +
+                        "<label for='record-type'>记录类型：</label>" +
+                        "<select id='record-type'>" +
+                            "<option value='milestone'>里程碑</option>" +
+                            "<option value='weight'>体重记录</option>" +
+                        "</select>" +
+                    "</div>" +
+                    "<div class='form-group'>" +
+                        "<label for='record-date'>日期：</label>" +
+                        "<input type='date' id='record-date' value='" + dateStr + "' required>" +
+                    "</div>" +
+                    "<div id='milestone-content-group' class='form-group'>" +
+                        "<label for='milestone-content'>内容：</label>" +
+                        "<textarea id='milestone-content' rows='4' placeholder='请输入里程碑内容'></textarea>" +
+                    "</div>" +
+                    "<div id='weight-content-group' class='form-group' style='display: none;'>" +
+                        "<label for='weight-value'>体重：</label>" +
+                        "<input type='number' id='weight-value' step='0.1' placeholder='请输入体重'>" +
+                        "<input type='text' id='weight-unit' value='kg' placeholder='单位'>" +
+                    "</div>" +
+                    "<div class='form-actions'>" +
+                        "<button type='submit' class='btn btn-primary'>保存</button>" +
+                        "<button type='button' id='cancel-add-growth' class='btn btn-secondary'>取消</button>" +
+                    "</div>" +
+                "</form>" +
+            "</div>" +
+        "</div>";
+        
+        // 添加到页面
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+        
+        // 初始化模态框事件
+        this.initAddGrowthModalEvents();
+    }
+    
+    /**
+     * 初始化添加成长记录模态框事件
+     */
+    initAddGrowthModalEvents() {
+        var self = this;
+        
+        // 确保模态框存在
+        var modal = document.getElementById('add-growth-modal');
+        if (!modal) return;
+        
+        // 关闭按钮事件
+        var closeBtn = document.getElementById('close-growth-modal');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function() {
+                modal.remove();
+            });
+        }
+        
+        // 取消按钮事件
+        var cancelBtn = document.getElementById('cancel-add-growth');
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', function() {
+                modal.remove();
+            });
+        }
+        
+        // 点击外部关闭
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
+        
+        // 记录类型切换事件
+        var recordType = document.getElementById('record-type');
+        if (recordType) {
+            recordType.addEventListener('change', function() {
+                const milestoneGroup = document.getElementById('milestone-content-group');
+                const weightGroup = document.getElementById('weight-content-group');
+                
+                if (this.value === 'milestone') {
+                    milestoneGroup.style.display = 'block';
+                    weightGroup.style.display = 'none';
+                } else {
+                    milestoneGroup.style.display = 'none';
+                    weightGroup.style.display = 'block';
+                }
+            });
+        }
+        
+        // 表单提交事件
+        var form = document.getElementById('add-growth-form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 获取表单数据
+                var type = document.getElementById('record-type').value;
+                var date = document.getElementById('record-date').value;
+                
+                // 根据类型获取不同的内容
+                var record = {
+                    type: type,
+                    date: date
+                };
+                
+                if (type === 'milestone') {
+                    var content = document.getElementById('milestone-content').value.trim();
+                    if (!content) {
+                        alert('请填写里程碑内容');
+                        return;
+                    }
+                    record.content = content;
+                } else if (type === 'weight') {
+                    var weight = document.getElementById('weight-value').value;
+                    var unit = document.getElementById('weight-unit').value.trim();
+                    
+                    if (!weight) {
+                        alert('请填写体重');
+                        return;
+                    }
+                    
+                    record.weight = parseFloat(weight);
+                    record.unit = unit || 'kg';
+                }
+                
+                // 保存成长记录
+                if (PetModule.addGrowthRecord(self.currentPetId, record)) {
+                    alert('成长记录添加成功');
+                    modal.remove();
+                    // 重新加载成长记录
+                    var pet = PetModule.getPetById(self.currentPetId);
+                    self.updateGrowthTab(pet);
+                } else {
+                    alert('成长记录添加失败，请重试');
+                }
+            });
         }
     }
     

@@ -10,16 +10,8 @@
     <link rel="stylesheet" href="../css/main.css">
 </head>
 <body>
-    <!-- 简洁标题栏 -->
-    <header class="simple-header">
-        <div class="container">
-            <div class="header-content">
-                <a href="../index.html" class="personal-space-link">个人空间</a>
-                <h1>我的书架</h1>
-                <div class="empty-space"></div>
-            </div>
-        </div>
-    </header>
+    <!-- 导航栏 -->
+    <nav id="navbar"></nav>
 
     <!-- 主内容区域 -->
     <main class="main">
@@ -54,6 +46,37 @@
     <!-- 通知容器 -->
     <div id="notification-container"></div>
 
+    <!-- 加载导航栏脚本 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 加载导航栏
+            const nav = document.getElementById('navbar');
+            if (nav) {
+                nav.innerHTML = `
+                    <div class="nav-container">
+                        <a href="../index.html" class="logo">个人成长</a>
+                        <div class="nav-links">
+                            <a href="trips.html">旅程</a>
+                            <a href="gallery.html">相册</a>
+                            <a href="reading.html">读书</a>
+                            <a href="hobbies.html">兴趣爱好</a>
+                            <a href="pets.html">宠物</a>
+                            <a href="my-profile.html">我的</a>
+                        </div>
+                    </div>
+                `;
+                
+                // 高亮当前页面
+                const navLinks = document.querySelectorAll('#navbar a');
+                navLinks.forEach(link => {
+                    if (link.href.includes('reading.html')) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
+    </script>
+    
     <!-- 引入JavaScript模块 -->
     <script type="module">
         // 动态导入读书应用模块
